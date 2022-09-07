@@ -1,2 +1,2 @@
-# AdvancedPython
-SPC Course repo
+# advanced-python-homework
+Homework template for advanced python
