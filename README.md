@@ -1,2 +1,3 @@
-# advanced-python-homework
-Homework template for advanced python
+# Advanced python homework
+
+Before perform of new homework assignment merge top commit of main branch in your repository.
