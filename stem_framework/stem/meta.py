@@ -59,57 +59,9 @@ class MetaVerification:
             else:
                 required_types = specification[required_key]
 
-            if required_key not in meta_keys:
-                errors.append(
-                    MetaFieldError(
-                        required_key=required_key,
-                        required_types=required_types
-                    )
-                )
-            else:
-                presented_value = get_meta_attr(meta, required_key)
-                presented_type = type(presented_value)
-
-                if (isinstance(required_types, type) or (
-                        isinstance(required_types, tuple) and isinstance(required_types[0], type)
-                )):
-                    if not issubclass(presented_type, required_types):
-                        errors.append(
-                            MetaFieldError(
-                                required_key=required_key,
-                                required_types=required_types,
-                                presented_value=presented_value,
-                                presented_type=presented_type
-                            )
-                        )
-                else:
-                    errors_next_level = MetaVerification.verify(
-                        get_meta_attr(meta, required_key),
-                        required_types
-                    ).error
-
-                    if errors_next_level != ():
-                        errors.append(errors_next_level)
-        return MetaVerification(*errors)
-
-
-def get_meta_attr(meta: Meta, key: str, default: Optional[Any] = None) -> Optional[Any]:
-    if type(meta) is dict:
-        try:
-            return meta[key]
-        except KeyError:
-            return default
-    else:
-        try:
-            return getattr(meta, key)
-        except AttributeError:
-            return default
-
-
-def update_meta(meta: Meta, **kwargs):
-    if type(meta) is dict:
-        for keyword, arg in kwargs.items():
-            meta[keyword] = arg
-    else:
-        for keyword, arg in kwargs.items():
-            setattr(meta, keyword, arg)
+Metadata processing:
+    This principle postulates that, during the
+processing of data, only initial data and it's metadata are allowed to be used as input.
+This means no user instructions (scripts) or
+manually managed intermediate states are possible.
+"""
