@@ -3,6 +3,7 @@ from typing_extensions import Protocol
 import dataclasses
 import re
 
+
 def pascal_case_to_snake_case(name: str) -> str:
     return re.sub(
         r"(?<=\w)[A-Z][a-z]",

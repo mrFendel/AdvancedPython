@@ -17,8 +17,8 @@ class SpecificationError(Exception):
 @dataclass
 class MetaFieldError:
     required_key: str
-    required_types: Optional[tuple[type]] = None
-    presented_type: Optional[type] = None
+    required_types: Union[Type, Tuple[Type, ...], None] = None
+    presented_type: Union[Type, None] = None
     presented_value: Any = None
 
 
@@ -93,7 +93,6 @@ class MetaVerification:
                         errors.append(errors_next_level)
 
         return MetaVerification(*errors)
-
 
 def get_meta_attr(meta: Meta, key: str, default: Optional[Any] = None) -> Optional[Any]:
     if type(meta) is dict:
