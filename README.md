@@ -1,3 +1,12 @@
-# Advanced python homework
+# AdvancedPython
+## STEM framework
 
-Before perform of new homework assignment merge top commit of main branch in your repository.
+#### Installing the packages for development:
+    ```sh
+    pip install -r requirements.txt
+    ```
+
+#### Building documentation via sphinx (html)
+    ```sh
+    python setup.py build_sphinx
+    ```
