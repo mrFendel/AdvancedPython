@@ -1,5 +1,6 @@
-from dataclasses import dataclass
-from typing import Optional, Any, Union
+from dataclasses import dataclass, is_dataclass
+from typing import Optional, Any, Union, Type, Tuple
+from stem_framework.stem.core import Dataclass
 
 
 Meta = Union[dict, Dataclass]
@@ -38,12 +39,36 @@ class MetaVerification:
     @staticmethod
     def verify(meta: Meta,
                specification: Optional[Specification] = None) -> "MetaVerification":
+
         if is_dataclass(meta):
             meta_keys = meta.__dataclass_fields__.keys()
         elif isinstance(meta, dict):
             meta_keys = meta.keys()
         else:
-            meta_keys = tuple()
+            meta_keys = ()
+
+        if is_dataclass(specification):
+            specification_keys = specification.__dataclass_fields__.keys()
+        else:
+            specification = dict(specification)
+            specification_keys = specification.keys()
+
+        errors = []
+        for required_key in specification_keys:
+            if is_dataclass(specification):
+                required_types = specification.__dataclass_fields__[required_key].type
+            else:
+                required_types = specification[required_key]
+
+            if required_key not in meta_keys:
+                errors.append(
+                    MetaFieldError(
+                        required_key=required_key,
+                        required_types=required_types
+                    )
+                )
+
+        return MetaVerification(*errors)
 
         if is_dataclass(specification):
             specification_keys = specification.__dataclass_fields__.keys()
