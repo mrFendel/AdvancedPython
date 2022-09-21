@@ -1,6 +1,5 @@
-from dataclasses import dataclass, is_dataclass
-from typing import Optional, Any, Union, Type, Tuple
-from stem_framework.stem.core import Dataclass
+from dataclasses import dataclass
+from typing import Optional, Any, Union
 
 
 Meta = Union[dict, Dataclass]
@@ -52,6 +51,17 @@ class MetaVerification:
             specification = dict(specification)
             specification_keys = specification.keys()
 
+def get_meta_attr(meta: Meta, key: str, default: Optional[Any] = None) -> Optional[Any]:
+    if type(meta) is dict:
+        try:
+            return meta[key]
+        except KeyError:
+            return default
+    else:
+        try:
+            return getattr(meta, key)
+        except AttributeError:
+            return default
         errors = list()
         for required_key in specification_keys:
             if is_dataclass(specification):
@@ -59,9 +69,10 @@ class MetaVerification:
             else:
                 required_types = specification[required_key]
 
-Metadata processing:
-    This principle postulates that, during the
-processing of data, only initial data and it's metadata are allowed to be used as input.
-This means no user instructions (scripts) or
-manually managed intermediate states are possible.
-"""
+def update_meta(meta: Meta, **kwargs):
+    if type(meta) is dict:
+        for keyword, arg in kwargs.items():
+            meta[keyword] = arg
+    else:
+        for keyword, arg in kwargs.items():
+            setattr(meta, keyword, arg)
