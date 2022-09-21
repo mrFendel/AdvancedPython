@@ -1,7 +1,7 @@
 import dataclasses
 from unittest import TestCase
 
-from stem.meta import MetaVerification, update_meta, get_meta_attr
+from stem_framework.stem.meta import MetaVerification, update_meta, get_meta_attr
 
 
 @dataclasses.dataclass

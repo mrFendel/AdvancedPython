@@ -1,6 +1,6 @@
 import dataclasses
 
-from stem.meta import Meta, Specification, get_meta_attr, MetaVerification
+from stem_framework.stem.meta import Meta, Specification, get_meta_attr, MetaVerification
 
 
 @dataclasses.dataclass

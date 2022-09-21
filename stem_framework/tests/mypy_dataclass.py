@@ -1,6 +1,6 @@
 import dataclasses
 
-from stem.core import Dataclass
+from stem_framework.stem.core import Dataclass
 
 
 @dataclasses.dataclass

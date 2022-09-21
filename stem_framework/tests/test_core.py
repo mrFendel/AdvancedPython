@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from stem.core import pascal_case_to_snake_case, Named
+from stem_framework.stem.core import pascal_case_to_snake_case, Named
 
 
 class CoreTest(TestCase):
