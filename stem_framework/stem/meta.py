@@ -40,6 +40,36 @@ class MetaVerification:
     def verify(meta: Meta,
                specification: Optional[Specification] = None) -> "MetaVerification":
 
+        if is_dataclass(meta):
+            meta_keys = meta.__dataclass_fields__.keys()
+        elif isinstance(meta, dict):
+            meta_keys = meta.keys()
+        else:
+            meta_keys = ()
+
+        if is_dataclass(specification):
+            specification_keys = specification.__dataclass_fields__.keys()
+        else:
+            specification = dict(specification)
+            specification_keys = specification.keys()
+
+        errors = []
+        for required_key in specification_keys:
+            if is_dataclass(specification):
+                required_types = specification.__dataclass_fields__[required_key].type
+            else:
+                required_types = specification[required_key]
+
+            if required_key not in meta_keys:
+                errors.append(
+                    MetaFieldError(
+                        required_key=required_key,
+                        required_types=required_types
+                    )
+                )
+
+        return MetaVerification(*errors)
+
 
 def get_meta_attr(meta: Meta, key: str, default: Optional[Any] = None) -> Optional[Any]:
     if type(meta) is dict:
