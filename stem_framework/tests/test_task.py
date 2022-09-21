@@ -1,8 +1,8 @@
 from functools import reduce
 from unittest import TestCase
 
-from stem_framework.stem.task import Task, MapTask, FilterTask, ReduceTask
-from stem_framework.tests.example_task import IntRange, int_range, int_scale, data_scale
+from stem.task import Task, MapTask, FilterTask, ReduceTask
+from tests.example_task import IntRange, int_range, int_scale, data_scale
 
 
 class TaskTest(TestCase):
@@ -30,19 +30,19 @@ class TaskTest(TestCase):
 
     def test_map_task(self):
         task = MapTask(lambda x: x * 10, int_range)
-        self.assertEqual(task.name, "map_int_range")
+        self.assertEqual(int_range.name, "map_int_range")
         for i, r in zip(range(0, 100, 10), task.transform({}, int_range=int_range.data({}))):
             self.assertEqual(i, r)
 
     def test_filter_task(self):
         task = FilterTask(lambda x: x % 2 == 0, int_range)
-        self.assertEqual(task.name, "filter_int_range")
+        self.assertEqual(int_range.name, "map_int_range")
         for i, r in zip(range(0, 10, 2), task.transform({}, int_range=int_range.data({}))):
             self.assertEqual(i, r)
 
     def test_reduce_task(self):
-        task = ReduceTask(lambda acc, x: acc + x, int_range)
-        self.assertEqual(task.name, "reduce_int_range")
+        task = MapTask(lambda acc, x: acc + x, int_range)
+        self.assertEqual(int_range.name, "map_int_range")
         self.assertEqual(reduce(lambda acc, x: acc + x, range(0, 10, 1)),
                          task.transform({}, int_range=int_range.data({})))
 
