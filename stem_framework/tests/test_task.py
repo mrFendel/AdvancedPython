@@ -36,13 +36,13 @@ class TaskTest(TestCase):
 
     def test_filter_task(self):
         task = FilterTask(lambda x: x % 2 == 0, int_range)
-        self.assertEqual(task.name, "map_int_range")
+        self.assertEqual(task.name, "filter_int_range")
         for i, r in zip(range(0, 10, 2), task.transform({}, int_range=int_range.data({}))):
             self.assertEqual(i, r)
 
     def test_reduce_task(self):
-        task = MapTask(lambda acc, x: acc + x, int_range)
-        self.assertEqual(task.name, "map_int_range")
+        task = ReduceTask(lambda acc, x: acc + x, int_range)
+        self.assertEqual(task.name, "reduce_int_range")
         self.assertEqual(reduce(lambda acc, x: acc + x, range(0, 10, 1)),
                          task.transform({}, int_range=int_range.data({})))
 
