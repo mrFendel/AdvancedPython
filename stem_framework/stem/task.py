@@ -63,14 +63,22 @@ class FunctionDataTask(DataTask[T]):
         return self._func(meta)
 
 
-def data(func: Callable[[Meta], T], specification: Optional[Specification] = None, **settings) -> FunctionDataTask[T]:
-    ...  # TODO()
+def data(cls=None, /, *, func: Callable[[Meta], T], specification: Optional[Specification] = None, **settings):
+    def wrap_as_FunctionDataTask(cls, *name):
+        return FunctionDataTask(name[0], func, specification, **settings)
+
+    if cls is None:
+        return wrap_as_FunctionDataTask
+    return wrap_as_FunctionDataTask(cls)
 
 
+def task(cls=None, /, *, func: Callable[[Meta, ...], T], specification: Optional[Specification] = None, **settings):
+    def wrap_as_FunctionTask(cls, *args):
+        return FunctionTask(name=args[0], func=func, dependencies=args[1], specification=specification, **settings)
 
-def task(func: Callable[[Meta, ...], T], specification: Optional[Specification] = None, **settings) -> FunctionTask[T]:
-    ... # TODO()
-
+    if cls is None:
+        return wrap_as_FunctionTask
+    return wrap_as_FunctionTask(cls)
 
 class MapTask(Task[Iterator[T]]):
     def __init__(self, func: Callable, dependence : Union[str, "Task"]):
