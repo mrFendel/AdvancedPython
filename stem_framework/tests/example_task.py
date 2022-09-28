@@ -3,8 +3,8 @@ from typing import Iterator
 
 import numpy as np
 
-from stem.meta import Meta, get_meta_attr
-from stem.task import DataTask, data, task
+from stem_framework.stem.meta import Meta, get_meta_attr
+from stem_framework.stem.task import DataTask, data, task
 
 
 class IntRange(DataTask):
