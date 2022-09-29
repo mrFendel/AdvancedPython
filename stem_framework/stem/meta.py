@@ -39,6 +39,58 @@ class MetaVerification:
     @staticmethod
     def verify(meta: Meta,
                specification: Optional[Specification] = None) -> "MetaVerification":
+        if is_dataclass(meta):
+            meta_keys = meta.__dataclass_fields__.keys()
+        elif isinstance(meta, dict):
+            meta_keys = meta.keys()
+        else:
+            meta_keys = tuple()
+
+        if is_dataclass(specification):
+            specification_keys = specification.__dataclass_fields__.keys()
+        else:
+            specification = dict(specification)
+            specification_keys = specification.keys()
+
+        errors = list()
+        for required_key in specification_keys:
+            if is_dataclass(specification):
+                required_types = specification.__dataclass_fields__[required_key].type
+            else:
+                required_types = specification[required_key]
+
+            if required_key not in meta_keys:
+                errors.append(
+                    MetaFieldError(
+                        required_key=required_key,
+                        required_types=required_types
+                    )
+                )
+            else:
+                presented_value = get_meta_attr(meta, required_key)
+                presented_type = type(presented_value)
+
+                if (isinstance(required_types, type) or (
+                        isinstance(required_types, tuple) and isinstance(required_types[0], type)
+                )):
+                    if not issubclass(presented_type, required_types):
+                        errors.append(
+                            MetaFieldError(
+                                required_key=required_key,
+                                required_types=required_types,
+                                presented_value=presented_value,
+                                presented_type=presented_type
+                            )
+                        )
+                else:
+                    errors_next_level = MetaVerification.verify(
+                        get_meta_attr(meta, required_key),
+                        required_types
+                    ).error
+
+                    if errors_next_level != ():
+                        errors.append(errors_next_level)
+        return MetaVerification(*errors)
 
         if is_dataclass(meta):
             meta_keys = meta.__dataclass_fields__.keys()
