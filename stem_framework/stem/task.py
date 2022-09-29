@@ -1,5 +1,7 @@
+from functools import reduce
 from typing import TypeVar, Union, Tuple, Callable, Optional, Generic, Any, Iterator
 from abc import ABC, abstractmethod
+
 from .core import Named
 from .meta import Specification, Meta
 
