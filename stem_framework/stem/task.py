@@ -1,5 +1,7 @@
+from functools import reduce
 from typing import TypeVar, Union, Tuple, Callable, Optional, Generic, Any, Iterator
 from abc import ABC, abstractmethod
+
 from .core import Named
 from .meta import Specification, Meta
 
@@ -63,33 +65,50 @@ class FunctionDataTask(DataTask[T]):
         return self._func(meta)
 
 
-def data(cls=None, /, *, func: Callable[[Meta], T], specification: Optional[Specification] = None, **settings):
-    def wrap_as_FunctionDataTask(cls, *name):
-        return FunctionDataTask(name[0], func, specification, **settings)
+def data(func: Callable[[Meta], T] | None = None, specification: Optional[Specification] = None, **settings):
+    def wrap_as_FunctionDataTask(name):
+        return FunctionDataTask(name, func, specification, **settings)
 
-    if cls is None:
+    if func is None:
         return wrap_as_FunctionDataTask
-    return wrap_as_FunctionDataTask(cls)
+    return wrap_as_FunctionDataTask(func.__name__)
 
 
-def task(cls=None, /, *, func: Callable[[Meta, ...], T], specification: Optional[Specification] = None, **settings):
-    def wrap_as_FunctionTask(cls, *args):
-        return FunctionTask(name=args[0], func=func, dependencies=args[1], specification=specification, **settings)
+def task(func: Callable[[Meta, ...], T] | None = None, specification: Optional[Specification] = None, **settings):
+    def wrap_as_FunctionTask(name, dependencies):
+        return FunctionTask(name, func, dependencies, specification, **settings)
 
-    if cls is None:
+    if func is None:
         return wrap_as_FunctionTask
-    return wrap_as_FunctionTask(cls)
+    return wrap_as_FunctionTask(func.__name__, tuple(el for el in func.__code__.co_varnames if el != 'meta'))
+
 
 class MapTask(Task[Iterator[T]]):
-    def __init__(self, func: Callable, dependence : Union[str, "Task"]):
-        ... # TODO()
+    def __init__(self, func: Callable, dependence: Union[str, "Task"]):
+        self.func = func
+        self.dependence = dependence
+        self.result = func(dependence)
+        self._name = "map_" + dependence
+
+    def transform(self, meta: Meta, **kwargs: Any):
+        return map(self.func, kwargs[self.dependence].items())
 
 
 class FilterTask(Task[Iterator[T]]):
     def __init__(self, key: Callable, dependence: Union[str, "Task"]):
-        ...  # TODO()
+        self.key = key
+        self.dependence = dependence
+        self._name = 'filter_' + dependence
+
+    def transform(self, meta: Meta, **kwargs: Any):
+        return filter(self.key, kwargs[self.dependence].items())
 
 
 class ReduceTask(Task[Iterator[T]]):
     def __init__(self, func: Callable, dependence: Union[str, "Task"]):
-        ...  # TODO()
+        self.func = func
+        self.dependence = dependence
+        self._name = 'reduce_' + dependence
+
+    def transform(self, meta: Meta, **kwargs: Any):
+        return reduce(self.func, kwargs[self.dependence].items())
