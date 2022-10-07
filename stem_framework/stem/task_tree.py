@@ -18,6 +18,10 @@ class TaskNode(Generic[T]):
         pass  # TODO()
 
     @property
+    def unresolved_dependencies(self) -> list["str"]:
+        pass # TODO()
+
+    @property
     def has_dependence_errors(self) -> bool:
         pass  # TODO()
 

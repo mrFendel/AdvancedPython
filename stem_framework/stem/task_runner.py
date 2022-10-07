@@ -1,3 +1,4 @@
+import os
 from typing import Generic, TypeVar
 from abc import ABC, abstractmethod
 
@@ -15,6 +16,24 @@ class TaskRunner(ABC, Generic[T]):
 
 
 class SimpleRunner(TaskRunner[T]):
+    def run(self, meta: Meta, task_node: TaskNode[T]) -> T:
+        pass  # TODO(Assignment 5)
+
+
+class ThreadingRunner(TaskRunner[T]):
+    MAX_WORKERS = 5
 
     def run(self, meta: Meta, task_node: TaskNode[T]) -> T:
-        pass  # TODO
+        pass  # TODO(Assignment 9)
+
+
+class AsyncRunner(TaskRunner[T]):
+    def run(self, meta: Meta, task_node: TaskNode[T]) -> T:
+        pass  # TODO(Assignment 9)
+
+
+class ProcessingRunner(TaskRunner[T]):
+    MAX_WORKERS = os.cpu_count()
+
+    def run(self, meta: Meta, task_node: TaskNode[T]) -> T:
+        pass  # TODO(Assignment 9)
