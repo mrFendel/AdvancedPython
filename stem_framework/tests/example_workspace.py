@@ -1,10 +1,10 @@
 from functools import reduce
 from typing import Iterator
 
-from stem.meta import Meta, get_meta_attr
-from stem.task import data, task
-from stem.workspace import Workspace
-from tests.example_task import IntRange, int_range
+from stem_framework.stem.meta import Meta, get_meta_attr
+from stem_framework.stem.task import data, task
+from stem_framework.stem.workspace import Workspace
+from stem_framework.tests.example_task import IntRange, int_range
 
 
 class SubSubWorkspace(metaclass=Workspace):
