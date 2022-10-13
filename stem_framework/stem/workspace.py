@@ -1,6 +1,8 @@
 from abc import abstractmethod, ABC, ABCMeta
+from importlib import import_module
 from types import ModuleType
 from typing import Optional, Any, TypeVar, Union
+from typing_extensions import Self
 
 from .core import Named
 from .meta import Meta
@@ -69,9 +71,24 @@ class IWorkspace(ABC, Named):
     def workspaces(self) -> set["IWorkspace"]:
         pass
 
-    def find_task(self, task_path: Union[str, TaskPath]) -> Optional[Task]:
-        ...  # TODO()
+    def find_task(cls, task_path: Union[str, TaskPath]) -> Optional[Task]:
+        if not isinstance(task_path, TaskPath):
+            task_path = TaskPath(task_path)
+        if not task_path.is_leaf:
+            for elem in cls.workspaces:
+                if elem.name == task_path.head:
+                    return elem.find_task(task_path.sub_path)
+            return None
+        else:
+            for task_name in cls.tasks:
+                if task_name == task_path.name:
+                    return cls.tasks[task_name]
+            for elem in cls.workspaces:
+                if attr := elem.find_task(task_path) is not None:
+                    return attr
+            return None
 
+    @classmethod
     def has_task(self, task_path: Union[str, TaskPath]) -> bool:
         return self.find_task(task_path) is not None
 
@@ -90,11 +107,33 @@ class IWorkspace(ABC, Named):
 
     @staticmethod
     def find_default_workspace(task: Task) -> "IWorkspace":
-        ...  # TODO()
+        try:
+            return task._stem_workspace
+        except AttributeError:
+            module = import_module(task.__module__)
+            return IWorkspace.module_workspace(module)
 
     @staticmethod
     def module_workspace(module: ModuleType) -> "IWorkspace":
-        ...  # TODO()
+        try:
+            return module.__stem_workspace
+
+        except AttributeError:
+            tasks = dict
+            workspaces = set
+
+            for elem in dir(module):
+                attr = getattr(module, elem)
+                if isinstance(attr, Task):
+                    tasks[elem] = attr
+                if isinstance(attr, IWorkspace):
+                    workspaces.add(attr)
+
+            module.__stem_workspace = LocalWorkspace(
+                module.__name__, tasks, workspaces
+            )
+
+            return module.__stem_workspace
 
 
 class ILocalWorkspace(IWorkspace):
@@ -117,4 +156,36 @@ class LocalWorkspace(ILocalWorkspace):
 
 
 class Workspace(ABCMeta, ILocalWorkspace):
-    ...  # TODO()
+    def __new__(mcls: type[Self], name: str, bases: tuple[type, ...], namespace: dict[str, Any], **kwargs: Any) -> Self:
+
+        cls = super().__new__(ABCMeta, name, bases, namespace, **kwargs)
+
+        try:
+            workspaces = set(cls.workspaces)
+        except AttributeError:
+            workspaces = set()
+
+        cls_dict = {elem: attr for elem, attr in cls.__dict__.items() if not elem.startswith('__')}
+
+        tasks_to_replace = {elem: ProxyTask(elem, attr) for elem, attr in cls_dict.items() if not callable(attr) and isinstance(attr, Task)}
+
+        for elem, attr in tasks_to_replace.items():
+            setattr(cls, elem, attr)
+            cls_dict[elem] = attr
+
+        for elem, attr in cls_dict.items():
+            if isinstance(attr, Task):
+                attr._stem_workspace = cls
+
+        tasks_to_show = {elem: attr for elem, attr in cls_dict.items() if isinstance(attr, Task)}
+
+        cls._tasks = tasks_to_show
+        cls._workspaces = workspaces
+        cls._name = name
+
+        def __new(userclass, *args, **kwargs):
+            return userclass
+
+        cls.__new__ = __new
+
+        return cls
