@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from stem.task_master import TaskMaster
-from stem.task_runner import SimpleRunner, TaskRunner, ThreadingRunner, AsyncRunner, ProcessingRunner
-from tests.example_task import int_scale
+from stem_framework.stem.task_master import TaskMaster
+from stem_framework.stem.task_runner import SimpleRunner, TaskRunner, ThreadingRunner, AsyncRunner, ProcessingRunner
+from stem_framework.tests.example_task import int_scale
 
 
 class RunnerTest(TestCase):

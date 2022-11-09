@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from stem.task_master import TaskMaster
-from stem.task_runner import SimpleRunner
-from tests.example_task import int_scale
+from stem_framework.stem.task_master import TaskMaster
+from stem_framework.stem.task_runner import SimpleRunner
+from stem_framework.tests.example_task import int_scale
 
 
 class SimpleRunnerTest(TestCase):
