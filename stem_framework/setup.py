@@ -19,5 +19,10 @@ setup(
         'build_sphinx': {
             'project': ('setup.py', name),
             'version': ('setup.py', version),
-            'source_dir': ('setup.py', 'doc')}}
+            'source_dir': ('setup.py', 'doc'),
+            },
+        'console_scripts': [
+            'stem_cli_main = stem.cli_main:stem_cli_main'
+        ]
+    }
 )

@@ -1,7 +1,6 @@
 from unittest import TestCase
 
-
-from stem.task_tree import TaskTree
+from stem_framework.stem.task_tree import TaskTree
 from .example_task import int_range, int_scale
 
 

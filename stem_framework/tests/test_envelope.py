@@ -1,7 +1,7 @@
 import io
 from unittest import TestCase
 
-from stem.envelope import Envelope
+from stem_framework.stem.envelope import Envelope
 
 
 class TestEnvelope(TestCase):
