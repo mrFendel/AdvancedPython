@@ -24,7 +24,7 @@ class MetaEncoder(JSONEncoder):
 
 
 class Envelope:
-    _MAX_SIZE = 128*1024*1024  # 128 Mb
+    _MAX_SIZE = 128*1024*1024
 
     def __init__(self, meta: Meta, data: Optional[Binary] = None):
         self.meta = meta
