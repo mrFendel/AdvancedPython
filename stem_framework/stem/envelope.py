@@ -36,8 +36,8 @@ class Envelope:
     @staticmethod
     def read(input_: BufferedReader) -> "Envelope":
         input_.read(2)
-        metaLength = int.from_bytes(input_.read(4))
-        dataLength = int.from_bytes(input_.read(4))
+        metaLength = int.from_bytes(input_.read(4), byteorder='big')
+        dataLength = int.from_bytes(input_.read(4), byteorder='big')
         meta = json.loads(input_.read(metaLength))
 
         if dataLength < Envelope._MAX_SIZE:
