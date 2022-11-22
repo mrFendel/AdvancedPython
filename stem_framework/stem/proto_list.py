@@ -14,19 +14,30 @@ class ProtoList(Sized, Iterable):
         self.proto_class = proto_class
 
     def __enter__(self):
-        pass  # TODO(Assignment 8)
+        self.file = open(self.path, 'rb')
+        self.lengths = list()
+        self.coordinates = list()
+        while (N := self.file.read(8)) != b'':
+            self.lengths.append(self.file.tell())
+            N = int.from_bytes(N, byteorder='big')
+            self.coordinates.append(N)
+            self.file.seek(N, 1)
+        return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass  # TODO(Assignment 8)
+    def __exit__(self, _type, value, tb):
+        self.file.__exit__(_type, value, tb)
 
     def __len__(self):
-        pass  # TODO(Assignment 8)
+        return self.lengths.__len__()
 
-    def __getitem__(self, item):
-        pass  # TODO(Assignment 8)
+    def __getitem__(self, elem):
+        self.file.seek(self.coordinates[elem])
+        N = self.lengths[elem]
+        return self.proto_class().ParseFromString(self.file.read(N))
 
     def __iter__(self) -> Iterator[GeneratedProtocolMessageType]:
-        pass  # TODO(Assignment 8)
+        for n in range(self.__len__()):
+            yield self[n]
 
 
 
