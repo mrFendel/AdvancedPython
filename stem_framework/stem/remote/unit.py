@@ -4,11 +4,11 @@ import socketserver
 from socketserver import StreamRequestHandler
 from typing import Optional
 
-from stem.envelope import Envelope
-from stem.task_master import TaskMaster
-from stem.task_runner import SimpleRunner
-from stem.task_tree import TaskTree
-from stem.workspace import IWorkspace
+from stem_framework.stem.envelope import Envelope
+from stem_framework.stem.task_master import TaskMaster
+from stem_framework.stem.task_runner import SimpleRunner
+from stem_framework.stem.task_tree import TaskTree
+from stem_framework.stem.workspace import IWorkspace
 from multiprocessing import Process
 
 
