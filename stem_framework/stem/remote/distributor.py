@@ -2,7 +2,7 @@ import asyncio
 import logging
 from asyncio import StreamReader, StreamWriter
 
-from stem.envelope import Envelope
+from stem_framework.stem.envelope import Envelope
 from multiprocessing import Process
 
 

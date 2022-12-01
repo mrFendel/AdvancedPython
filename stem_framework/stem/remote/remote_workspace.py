@@ -1,10 +1,11 @@
 from typing import Any, TypeVar
 
-from stem.meta import Meta
-from stem.task import Task
-from stem.workspace import IWorkspace
+from stem_framework.stem.meta import Meta
+from stem_framework.stem.task import Task
+from stem_framework.stem.workspace import IWorkspace
 
 T = TypeVar("T")
+
 
 class RemoteTask(Task):
 
@@ -25,6 +26,3 @@ class RemoteWorkspace(IWorkspace):
     @property
     def workspaces(self) -> set["IWorkspace"]:
         pass  # TODO(Assignment 10)
-
-
-
