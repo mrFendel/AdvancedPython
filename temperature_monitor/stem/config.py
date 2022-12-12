@@ -7,7 +7,7 @@ from yaml import load, Loader, dump, Dumper
 T = TypeVar("T")
 
 
-def from_dict(data: dict, factory: Type):
+def from_dict(data: dict, factory: Type[T]) -> T:
     pass  # TODO(Assignment 14)
 
 
