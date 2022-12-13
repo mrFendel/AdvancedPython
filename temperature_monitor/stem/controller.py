@@ -1,7 +1,8 @@
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 
-from PySide2.QtCore import QObject, Signal
+from PySide2.QtCore import QObject, Signal, QTimer
 
 from .database import Point
 from .device import Thermometer
@@ -13,15 +14,20 @@ class ControllerConfig:
 
 
 class ThermometerController(QObject):
-
-    measurement = ...  # TODO(Assignment 12)
+    measurement = Signal(float)
 
     def __init__(self, device: Thermometer, config: ControllerConfig):
-        pass  # TODO(Assignment 12)
+        super().__init__()
+        self.device = device
+        self.cfg = config
+        self.timer = QTimer()
+        temp = self.device.get()
+        self.measurement.send(temp)
+        logging.info(temp)
 
     def start(self):
-        pass  # TODO(Assignment 12)
+        self.timer.start(self.config.period)
 
     def stop(self):
-        pass  # TODO(Assignment 12)
+        self.timer.stop()
 
